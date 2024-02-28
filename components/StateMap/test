@@ -1,0 +1,75 @@
+import { useEffect, useState,useRef } from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import L from 'leaflet';
+import tileLayer from '../../util/tileLayer';
+
+const center = [52.22977, 21.01178];
+
+const Legend = ({ map }) => {
+  useEffect(() => {
+   
+    if (!map) return;
+    console.log('running..')
+    const legend = L.control({ position: "bottomleft" });
+
+    legend.onAdd = () => {
+      const div = L.DomUtil.create("div", "description");
+      L.DomEvent.disableClickPropagation(div);
+
+      const text = "<b>Lorem Ipsum</b> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book...";
+
+      div.innerHTML = text;
+
+      return div;
+    };
+
+    legend.addTo(map);
+
+  }, [map]);
+
+  return null;
+}
+
+const StateMap = () => {
+  const [map, setMap] = useState(null);
+  const mapRef = useRef(null);
+  
+  // setInterval(()=>{
+  //   if (mapRef.current) {
+  //     // console.log('Map created:', mapRef);
+  //     console.log('Map created:', mapRef.current);
+  //     setMap(mapRef.current)
+  //     // You can perform any actions with the map instance here
+  //   }
+  // },1000)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (mapRef.current) {
+        console.log('Map created:', mapRef.current);
+        setMap(mapRef.current);
+        clearInterval(interval); // Stop interval once mapRef.current is available
+      }
+    }, 1000);
+    
+    // Cleanup function
+    return () => clearInterval(interval);
+  }, [mapRef]); // Include mapRef in the dependency array
+
+
+  return (
+    <MapContainer
+      ref={mapRef}
+      center={center}
+      zoom={18}
+      scrollWheelZoom={false}
+      style={{height:'50vh',width:'50vw'}}
+    >
+
+      <TileLayer {...tileLayer} />
+
+      <Legend map={map} />
+    </MapContainer>
+  )
+}
+
+export default StateMap;

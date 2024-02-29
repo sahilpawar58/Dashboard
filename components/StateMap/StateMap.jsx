@@ -8,25 +8,31 @@ import { useNavigate,useParams } from 'react-router-dom';
 // import Legend from '../Legend/Legend';
 import L from 'leaflet';
 
-const Legend = ({hovered}) => {
-  const map = useMap();
-  const legend = L.control({ position: "bottomright" });
+const Legend = ({ hoveredFeature }) => {
+  const map = useMap()
+  useEffect(() => {
+    const legend = L.control({ position: "bottomleft" });
 
-  legend.onAdd = () => {
-    const div = L.DomUtil.create("div", "description");
-    L.DomEvent.disableClickPropagation(div);
+    legend.onAdd = () => {
+      const div = L.DomUtil.create("div", "description");
 
-    const text = "<b>Lorem Ipsum</b> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book...";
+      const text = hoveredFeature ? JSON.stringify(hoveredFeature.properties, null, 2) : "No feature hovered";
+      console.log(hoveredFeature ? JSON.stringify(hoveredFeature.properties.name, null, 2) : "No feature hovered")
+      div.innerHTML = text;
 
-    div.innerHTML = text;
+      return div;
+    };
 
-    return div; // Return the created element
-  };
+    legend.addTo(map);
 
-  legend.addTo(map);
+    return () => {
+      legend.remove();
+    };
+  }, [hoveredFeature]);
 
-return null; // No need to return anything
+  return null;
 };
+
 
 function StateMap({url,center,District_ID}) {
   const [geojsonData, setGeojsonData] = useState(null);
@@ -35,6 +41,7 @@ function StateMap({url,center,District_ID}) {
   const { id } = useParams();
   // const [map, setMap] = useState(null);
   const [hovered,sethover] = useState(false);
+  const [hoveredFeature, setHoveredFeature] = useState(null);
 
   useEffect(() => {
     axios({
@@ -85,7 +92,7 @@ function StateMap({url,center,District_ID}) {
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
       layer.bringToFront();
     }
-
+    setHoveredFeature(layer.feature);
   }
 
   function resetHighlight(e) {
@@ -97,12 +104,13 @@ function StateMap({url,center,District_ID}) {
       fillOpacity: 0.9,
       fillColor: getColor(layer.feature.properties.total)
     });
+    setHoveredFeature(null);
   }
 
   function redirectToPage(feature) {
     console.log(feature.properties.District_ID);
-    // const District_ID = feature.properties.District_ID;
-    // navigate(`/villages/${District_ID}`);
+    const District_ID = feature.properties.District_ID;
+    navigate(`/villages/${District_ID}`);
   }
 
   function onEachFeature(feature, layer) {
@@ -122,7 +130,7 @@ function StateMap({url,center,District_ID}) {
       {geojsonData && (
         <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />
       )}
-       <Legend hovered={hovered}/>
+       <Legend hoveredFeature={hoveredFeature}/>
        
     </MapContainer>}
     </>

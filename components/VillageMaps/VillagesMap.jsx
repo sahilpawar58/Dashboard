@@ -20,22 +20,18 @@ const Legend = ({ hoveredFeature }) => {
       const text = hoveredFeature ? (`<div className="bg-red-400 shadow">
       <h2 className="text-lg font-bold mb-2">Hovered Feature:</h2>
       <pre style="background-color:orange;">
-      <b>Name: </b>${JSON.stringify(hoveredFeature.properties.name, null, 2)}
-      <b>District: </b>${JSON.stringify(hoveredFeature.properties.District, null, 2)}
-      <b>District_Id: </b>${JSON.stringify(hoveredFeature.properties.District_ID, null, 2)}
+      <b>Village Name: </b>${JSON.stringify(hoveredFeature.properties.NAME, null, 2)}
+      <b>District: </b>${JSON.stringify(hoveredFeature.properties.DISTRICT, null, 2)}
+      <b>District_Id: </b>${JSON.stringify(hoveredFeature.properties.Tehsil_NO, null, 2)}
       </pre>
     </div>`): "No feature hovered";
-      console.log(hoveredFeature ? JSON.stringify(hoveredFeature.properties.name, null, 2) : "No feature hovered")
+      // console.log(hoveredFeature ? JSON.stringify(hoveredFeature.properties.name, null, 2) : "No feature hovered")
       div.innerHTML = text;
 
       return div;
     };
 
     legend.addTo(map);
-
-    map.on('click', () => {
-      legend.remove();
-    });
 
     return () => {
       legend.remove();
@@ -46,13 +42,13 @@ const Legend = ({ hoveredFeature }) => {
 };
 
 
-function StateMap({url,center,District_ID}) {
+function VillageMap({url,center,District_ID}) {
   const [geojsonData, setGeojsonData] = useState(null);
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
   // const [map, setMap] = useState(null);
-  const [legend,setLegend] = useState(false);
+  const [hovered,sethover] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
 
   useEffect(() => {
@@ -104,25 +100,38 @@ function StateMap({url,center,District_ID}) {
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
       layer.bringToFront();
     }
+    // setHoveredFeature(layer.feature);
+    // clearTimeout(timeoutId); // Clear any existing timeout
     setHoveredFeature(layer.feature);
+
+    // // Delay the update of the hovered feature state
+    // timeoutId = setTimeout(() => {
+    //   setHoveredFeature(null);
+    // }, 2000); // Adjust the delay time as needed
   }
 
   function resetHighlight(e) {
     const layer = e.target;
-    layer.setStyle({
-      weight: 1,
-      color: 'grey',
-      dashArray: '',
-      fillOpacity: 0.9,
-      fillColor: getColor(layer.feature.properties.total)
-    });
-    setHoveredFeature(null);
+    // Check if the current hovered feature is the same as the feature being unhovered
+    if (hoveredFeature !== layer.feature) {
+      layer.setStyle({
+        weight: 1,
+        color: 'grey',
+        dashArray: '',
+        fillOpacity: 0.9,
+        fillColor: getColor(layer.feature.properties.total)
+      });
+    }
+    // clearTimeout(timeoutId);
+    // If the current hovered feature is the same, it means it will be handled by highlightFeature
   }
+  
 
   function redirectToPage(feature) {
-    console.log(feature.properties.District_ID);
+    //console.log(feature.properties.District_ID);
     const District_ID = feature.properties.District_ID;
-    navigate(`/taluka/${District_ID}`);
+    const Tehsil_NO = feature.properties.Tehsil_NO;
+    navigate(`/villages/${District_ID}/${Tehsil_NO}`);
   }
 
   function onEachFeature(feature, layer) {
@@ -149,4 +158,4 @@ function StateMap({url,center,District_ID}) {
   );
 }
 
-export default StateMap;
+export default VillageMap;

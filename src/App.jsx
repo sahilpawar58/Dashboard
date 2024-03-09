@@ -8,7 +8,7 @@ import MapContainer from '../components/MapContianer'
 import RightPage from '../components/RightPage';
 import Layout from '../components/Layout/Layout'
 import StateDetails from '../components/StateDetails/StateDetails'
-import VillageMapContianer from '../components/VillageMap/VillageMapContianer'
+import TalukaMapContianer from '../components/TalukaMaps/TalukaMapContianer'
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -17,6 +17,9 @@ import {
   Link,
 } from "react-router-dom";
 import StateMapContianer from '../components/StateMap/StateMapContianer'
+import RealTimeDashboard from '../components/Dashboard/RealTimeDashboard'
+import VillageMapContianer from '../components/VillageMaps/VillageMapContainer'
+// import NewLineChart from '../components/RealTimeDashboard/NewLineChart'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,11 +36,23 @@ const router = createBrowserRouter(
           </>
           } 
           />
-          <Route path="/villages/:District_ID" element={
+          <Route path="/taluka/:District_ID" element={
+          <>
+          <TalukaMapContianer url="http://localhost:3000/api/v1/geojson/taluka" center={[18.8047902, 76.528924]}/>
+          </>
+          }
+           />
+           <Route path="/villages/:District_ID/:Tehsil_ID" element={
           <>
           <VillageMapContianer url="http://localhost:3000/api/v1/geojson/villages" center={[18.8047902, 76.528924]}/>
           </>
-          } />
+          }
+           />
+           <Route path="/Dashboard" element={
+          <>
+          <RealTimeDashboard />
+          </>
+          }/>
     </Route>
   )
 )

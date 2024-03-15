@@ -19,10 +19,14 @@ import {
 import StateMapContianer from '../components/StateMap/StateMapContianer'
 import RealTimeDashboard from '../components/Dashboard/RealTimeDashboard'
 import VillageMapContianer from '../components/VillageMaps/VillageMapContainer'
+import MapContextProvider from '../components/context/MapContextProvider'
+import DetailedMap from '../components/DetailedMap/DetailedMap'
+import DetailedMapContainer from '../components/DetailedMap/DetailedMapContainer'
 // import NewLineChart from '../components/RealTimeDashboard/NewLineChart'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
+    
     <Route path="/" element={<Layout />}>
          <Route path="main" element={
          <>
@@ -30,9 +34,10 @@ const router = createBrowserRouter(
          <RightPage />
          </>} 
          />
+         
          <Route path="/state/:id" element={
           <>
-          <StateMapContianer url="http://localhost:3000/api/v1/geojson/state" center={[18.8047902, 76.528924]}/>
+          <StateMapContianer url="http://localhost:3000/api/v1/geojson/state" center={[19.0760, 76.2685]}/>
           </>
           } 
           />
@@ -42,14 +47,21 @@ const router = createBrowserRouter(
           </>
           }
            />
+          
            <Route path="/villages/:District_ID/:Tehsil_ID" element={
           <>
           <VillageMapContianer url="http://localhost:3000/api/v1/geojson/villages" center={[18.8047902, 76.528924]}/>
           </>
           }
            />
+           <Route path="/village" element={
+            <DetailedMapContainer >
+            <DetailedMap />
+          </DetailedMapContainer>
+           }/>
            <Route path="/Dashboard" element={
           <>
+          
           <RealTimeDashboard />
           </>
           }/>
@@ -67,7 +79,9 @@ function App() {
     <MapContainer />
     <RightPage />
     </div> */}
+    <MapContextProvider>
     <RouterProvider router={router} />
+    </MapContextProvider>
     </>
   )
 }

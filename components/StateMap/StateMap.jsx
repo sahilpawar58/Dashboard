@@ -5,11 +5,41 @@ import axios from 'axios';
 import { AiOutlineLoading } from "react-icons/ai";
 import '../../src/App.css';
 import { useNavigate,useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import MapContext from '../context/MapContext';
 // import Legend from '../Legend/Legend';
 import L from 'leaflet';
+// import { set } from 'mongoose';
 
-const Legend = ({ hoveredFeature }) => {
-  const map = useMap()
+function findAverage(coords) {
+  let totalX = 0;
+  let totalY = 0;
+
+  // Sum up all x and y coordinates
+  coords.forEach(coord => {
+    const [x, y] = coord;
+    totalX += x;
+    totalY += y;
+  });
+
+  // Calculate the average
+  const averageX = totalX / coords.length;
+  const averageY = totalY / coords.length;
+
+  return [averageY ,averageX ];
+}
+
+
+
+
+
+
+
+
+const Legend = ({ hoveredFeature, setDirectCenter }) => {
+  const map = useMap();
+  const {NewCenter,setNewCenter} = useContext(MapContext)
+  
   useEffect(() => {
     const legend = L.control({ position: "bottomleft" });
 
@@ -25,7 +55,55 @@ const Legend = ({ hoveredFeature }) => {
       <b>District_Id: </b>${JSON.stringify(hoveredFeature.properties.District_ID, null, 2)}
       </pre>
     </div>`): "No feature hovered";
-      console.log(hoveredFeature ? JSON.stringify(hoveredFeature.properties.name, null, 2) : "No feature hovered")
+    console.log("length="+hoveredFeature?.geometry?.coordinates.length)
+    let avg_cor = []
+    for(let i=0;i<hoveredFeature?.geometry?.coordinates.length;i++){
+      console.log(hoveredFeature.geometry.coordinates[i][0].length);
+      avg_cor +=  findAverage(hoveredFeature.geometry.coordinates[i])
+    }
+    console.log(avg_cor)
+    if(hoveredFeature?.geometry?.coordinates[0]){
+      let max=0;
+      let index=0;
+      for(let i=0;i<hoveredFeature.geometry.coordinates.length;i++){
+        console.log(hoveredFeature.geometry.coordinates[i][0].length)
+        if(hoveredFeature.geometry.coordinates[i][0].length > max){
+          index=i;
+          max=hoveredFeature.geometry.coordinates[i][0].length;
+        }
+      }
+      console.log("max is= "+max/10)
+      let ini=false;
+      if(max/10 <1){
+        ini =true;
+        for(let i=0;i<hoveredFeature.geometry.coordinates.length;i++){
+          console.log(hoveredFeature.geometry.coordinates[i].length)
+          if(hoveredFeature.geometry.coordinates[i].length > max){
+            index=i;
+            max=hoveredFeature.geometry.coordinates[i].length;
+          }
+        }
+      }
+      if(ini){
+        let x= findAverage(hoveredFeature?.geometry.coordinates[index]);
+        setNewCenter(x)
+        // console.log(hoveredFeature?.geometry?.coordinates[index])
+        console.log(x)
+      }else{
+        let x =findAverage(hoveredFeature?.geometry?.coordinates[index][0]);
+        setNewCenter(x)
+        // console.log(hoveredFeature?.geometry?.coordinates[index][0])
+        console.log(x)
+      }
+      
+      // console.log(max)
+      // console.log(findCentroid(hoveredFeature.geometry))
+    }
+    // console.log((hoveredFeature?.geometry?.coordinates[0]))
+    // console.log(findCentroid(hoveredFeature?.geometry))
+    // const centroid = findCentroid(hoveredFeature);
+    // console.log("Centroid:", centroid);
+      // console.log(hoveredFeature ? JSON.stringify(hoveredFeature.properties.name, null, 2) : "No feature hovered")
       div.innerHTML = text;
 
       return div;
@@ -47,6 +125,7 @@ const Legend = ({ hoveredFeature }) => {
 
 
 function StateMap({url,center,District_ID}) {
+  // const {NewCenter} = useContext();
   const [geojsonData, setGeojsonData] = useState(null);
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
@@ -129,20 +208,20 @@ function StateMap({url,center,District_ID}) {
     layer.on({
       mouseover: (e) => {highlightFeature(e)},
       mouseout: (e) => {resetHighlight(e)},
-      click: () => redirectToPage(feature),
-    });
+      click: () => redirectToPage(feature)},
+    );
   }
 
   return (
     <>
     {loading?
     <div className='flex flex-row justify-center h-full w-full items-center'><AiOutlineLoading className='animate-spin h-20 w-20 mr-3'/><p>Loading...</p></div>:
-    <MapContainer center={center} zoom={7} style={{ height: '100vh' }} >
+    <MapContainer center={center} zoom={7} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {geojsonData && (
         <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />
       )}
-       <Legend hoveredFeature={hoveredFeature}/>
+       <Legend hoveredFeature={hoveredFeature} />
        
     </MapContainer>}
     </>

@@ -27,7 +27,6 @@ function findAverage(coords) {
   return [averageY ,averageX ];
 }
 
-
 const Legend = ({ hoveredFeature }) => {
   const map = useMap()
   
@@ -49,20 +48,7 @@ const Legend = ({ hoveredFeature }) => {
     </div>`): "No feature hovered";
       // console.log(hoveredFeature ? JSON.stringify(hoveredFeature.properties.name, null, 2) : "No feature hovered")
       if(hoveredFeature?.geometry?.coordinates[0]){
-        const geoJsonData = {
-          type: "FeatureCollection",
-          features: [
-            {
-              type: "Feature",
-              properties: {}, // Add properties here if needed
-              geometry: {
-                type: "Polygon", // Or "MultiPolygon" if appropriate
-                coordinates: hoveredFeature.geometry.coordinates, // Ensure this structure matches the expected GeoJSON structure
-              }
-            }
-          ]
-        };
-        setVillageCoord(geoJsonData)
+        setVillageCoord(hoveredFeature.geometry.coordinates)
         console.log(hoveredFeature.geometry.coordinates)
         console.log("is it ?"+VillageCoord)
         let max=0;
@@ -118,7 +104,7 @@ const Legend = ({ hoveredFeature }) => {
 };
 
 
-function VillageMap({url,center,District_ID}) {
+function DetailedMap({url,center,District_ID}) {
   const [geojsonData, setGeojsonData] = useState(null);
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
@@ -126,21 +112,9 @@ function VillageMap({url,center,District_ID}) {
   // const [map, setMap] = useState(null);
   const [hovered,sethover] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
-  const {NewCenter,setNewCenter} = useContext(MapContext);
-
-  useEffect(() => {
-    axios({
-      method: 'get',
-      url: url,
-      // responseType: 'stream'
-    })
-    .then(function (response) {
-      console.log(response.data)
-      setGeojsonData(response.data.data);
-      setLoading(false);
-    });
-
-  }, [id]);
+  const {NewCenter,setNewCenter,VillageCoord,setVillageCoord} = useContext(MapContext);
+  
+  console.log(VillageCoord)
 
   function getColor(d) {
     return d > 14673187 ? '#0047ab' :
@@ -205,7 +179,10 @@ function VillageMap({url,center,District_ID}) {
   
 
   function redirectToPage(feature) {
-    navigate(`/village`);
+    //console.log(feature.properties.District_ID);
+    const District_ID = feature.properties.District_ID;
+    const Tehsil_NO = feature.properties.Tehsil_NO;
+    navigate(`/villages/${District_ID}/${Tehsil_NO}`);
   }
 
   function onEachFeature(feature, layer) {
@@ -218,18 +195,17 @@ function VillageMap({url,center,District_ID}) {
 
   return (
     <>
-    {loading?
-    <div className='flex flex-row justify-center h-full w-full items-center'><AiOutlineLoading className='animate-spin h-20 w-20 mr-3'/><p>Loading...</p></div>:
-    <MapContainer center={NewCenter} zoom={10} style={{ height: '100vh', width: '100%' }} >
+    
+     <MapContainer center={NewCenter} zoom={13} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      {geojsonData && (
-        <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />
-      )}
+      
+        <GeoJSON data={VillageCoord} style={style} onEachFeature={onEachFeature} />
+      
        <Legend hoveredFeature={hoveredFeature}/>
        
-    </MapContainer>}
+    </MapContainer>
     </>
   );
 }
 
-export default VillageMap;
+export default DetailedMap;

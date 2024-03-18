@@ -27,7 +27,23 @@ function findAverage(coords) {
   return [averageY ,averageX ];
 }
 
+const Marker =() => {
+  var marker;
+  const map = useMap();
 
+  // Function to add marker and retrieve its coordinates
+  function addMarkerAndRetrieveCoordinates(e) {
+    if (marker) {
+      map.removeLayer(marker); // Remove existing marker if any
+    }
+    marker = L.marker(e.latlng).addTo(map); // Add new marker
+    var coordinates = e.latlng.lat.toFixed(6) + ', ' + e.latlng.lng.toFixed(6); // Format coordinates
+    alert('Coordinates: ' + coordinates); // Display coordinates in an alert box
+  }
+
+  // Listen for click events on the map and call the function to add marker and retrieve coordinates
+  map.on('click', addMarkerAndRetrieveCoordinates);
+}
 const Legend = ({ hoveredFeature }) => {
   const map = useMap()
   
@@ -89,12 +105,16 @@ const Legend = ({ hoveredFeature }) => {
 
         if(ini){
           let x= findAverage(hoveredFeature?.geometry.coordinates[index]);
-          setNewCenter(x)
+          let temp = NewCenter;
+        temp.push(x)
+        setNewCenter(temp)
           // console.log(hoveredFeature?.geometry?.coordinates[index])
           // console.log(x)
         }else{
           let x =findAverage(hoveredFeature?.geometry?.coordinates[index][0]);
-          setNewCenter(x)
+          let temp = NewCenter;
+        temp.push(x)
+        setNewCenter(temp)
           // console.log(hoveredFeature?.geometry?.coordinates[index][0])
           // console.log(x)
         }
@@ -166,6 +186,7 @@ function VillageMap({url,center,District_ID}) {
     map.remove(document.getElementsByClassName("description"))
   }
 
+
   function highlightFeature(e) {
     const layer = e.target;
     layer.setStyle({
@@ -220,12 +241,13 @@ function VillageMap({url,center,District_ID}) {
     <>
     {loading?
     <div className='flex flex-row justify-center h-full w-full items-center'><AiOutlineLoading className='animate-spin h-20 w-20 mr-3'/><p>Loading...</p></div>:
-    <MapContainer center={NewCenter} zoom={10} style={{ height: '100vh', width: '100%' }} >
+    <MapContainer center={NewCenter[NewCenter.length-1]} zoom={10} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {geojsonData && (
         <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />
       )}
        <Legend hoveredFeature={hoveredFeature}/>
+       {/* <Marker /> */}
        
     </MapContainer>}
     </>

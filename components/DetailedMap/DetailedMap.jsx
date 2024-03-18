@@ -27,6 +27,24 @@ function findAverage(coords) {
   return [averageY ,averageX ];
 }
 
+const Marker =() => {
+  var marker;
+  const map = useMap();
+
+  // Function to add marker and retrieve its coordinates
+  function addMarkerAndRetrieveCoordinates(e) {
+    if (marker) {
+      map.removeLayer(marker); // Remove existing marker if any
+    }
+    marker = L.marker(e.latlng).addTo(map); // Add new marker
+    var coordinates = e.latlng.lat.toFixed(6) + ', ' + e.latlng.lng.toFixed(6); // Format coordinates
+    console.log('Coordinates: ' + coordinates); // Display coordinates in an alert box
+  }
+
+  // Listen for click events on the map and call the function to add marker and retrieve coordinates
+  map.on('click', addMarkerAndRetrieveCoordinates);
+}
+
 const Legend = ({ hoveredFeature }) => {
   const map = useMap()
   
@@ -127,12 +145,12 @@ function DetailedMap({url,center,District_ID}) {
 
   function style(feature) {
     return {
-      weight: 1,
+      weight: 5,
       opacity: 1,
       color: 'grey',
       dashArray: '',
-      fillOpacity: 0.9,
-      fillColor: getColor(feature.properties.total)
+      fillOpacity: 0.4,
+      // fillColor: "#FFFFFF"
     };
   }
   function removeLegend(){
@@ -187,21 +205,22 @@ function DetailedMap({url,center,District_ID}) {
 
   function onEachFeature(feature, layer) {
     layer.on({
-      mouseover: (e) => {highlightFeature(e)},
-      mouseout: (e) => {resetHighlight(e)},
-      click: () => redirectToPage(feature),
+      // mouseover: (e) => {highlightFeature(e)},
+      // mouseout: (e) => {resetHighlight(e)},
+      // click: () => redirectToPage(feature),
     });
   }
 
   return (
     <>
     
-     <MapContainer center={NewCenter} zoom={13} style={{ height: '100vh', width: '100%' }} >
+     <MapContainer center={NewCenter[NewCenter.length-1]} zoom={14} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       
         <GeoJSON data={VillageCoord} style={style} onEachFeature={onEachFeature} />
       
        <Legend hoveredFeature={hoveredFeature}/>
+       <Marker />
        
     </MapContainer>
     </>

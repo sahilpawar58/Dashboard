@@ -76,12 +76,16 @@ const Legend = ({ hoveredFeature }) => {
         }
         if(ini){
           let x= findAverage(hoveredFeature?.geometry.coordinates[index]);
-          setNewCenter(x)
+          let temp = NewCenter;
+        temp.push(x)
+        setNewCenter(temp)
           // console.log(hoveredFeature?.geometry?.coordinates[index])
           console.log(x)
         }else{
           let x =findAverage(hoveredFeature?.geometry?.coordinates[index][0]);
-          setNewCenter(x)
+          let temp = NewCenter;
+        temp.push(x)
+        setNewCenter(temp)
           // console.log(hoveredFeature?.geometry?.coordinates[index][0])
           console.log(x)
         }
@@ -211,7 +215,7 @@ function VillageMap({url,District_ID}) {
     <>
     {loading?
     <div className='flex flex-row justify-center h-full w-full items-center'><AiOutlineLoading className='animate-spin h-20 w-20 mr-3'/><p>Loading...</p></div>:
-    <MapContainer center={NewCenter} zoom={9} style={{ height: '100vh', width: '100%' }} >
+    <MapContainer center={NewCenter[NewCenter.length-1]} zoom={9} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {geojsonData && (
         <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />

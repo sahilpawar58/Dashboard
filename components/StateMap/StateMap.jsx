@@ -86,12 +86,17 @@ const Legend = ({ hoveredFeature, setDirectCenter }) => {
       }
       if(ini){
         let x= findAverage(hoveredFeature?.geometry.coordinates[index]);
-        setNewCenter(x)
+        let temp = NewCenter;
+        temp.push(x)
+        setNewCenter(temp);
+        // localStorage.setItem('NewCenter', temp);
         // console.log(hoveredFeature?.geometry?.coordinates[index])
         console.log(x)
       }else{
         let x =findAverage(hoveredFeature?.geometry?.coordinates[index][0]);
-        setNewCenter(x)
+        let temp = NewCenter;
+        temp.push(x)
+        setNewCenter(temp)
         // console.log(hoveredFeature?.geometry?.coordinates[index][0])
         console.log(x)
       }

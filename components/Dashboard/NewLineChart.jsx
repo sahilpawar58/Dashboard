@@ -84,13 +84,16 @@ export default function NewLineChart() {
   };
 
   const getData = async () => {
-    const response = await fetch("http://127.0.0.1:4000/api/data");
+    const response = await fetch("http://127.0.0.1:4000/api/data", {
+      credentials: 'include' // Include cookies in the request
+    });
     return await response.json();
   };
+  
 
   return (
     <>
-    <div ref={pH} style={{ width:"100vw",height: "40vh" }} className='bg-red-400 border-solid border-2 border-indigo-600 m-8'>
+    <div ref={pH} style={{ width:"80vw",height: "40vh" }} className=' border-solid border-2 border-indigo-600 m-8'>
       <canvas id="realflow" ref={canvasRef}></canvas>
     </div>
     </>

@@ -14,22 +14,24 @@ function findAverage(coords) {
   let totalY = 0;
 
   // Sum up all x and y coordinates
-  coords.forEach(coord => {
-    const [x, y] = coord;
-    totalX += x;
-    totalY += y;
+  coords[0].forEach(coord => {
+    
+      const [x, y,z] = coord;
+      totalX += x;
+      totalY += y;
+ 
   });
 
   // Calculate the average
-  const averageX = totalX / coords.length;
-  const averageY = totalY / coords.length;
+  const averageX = totalX / coords[0].length;
+  const averageY = totalY / coords[0].length;
 
   return [averageY ,averageX ];
 }
 
 const Legend = ({ hoveredFeature }) => {
   const map = useMap();
-  const {NewCenter,setNewCenter} = useContext(MapContext)
+  
   useEffect(() => {
     const legend = L.control({ position: "bottomleft" });
 
@@ -46,53 +48,7 @@ const Legend = ({ hoveredFeature }) => {
       </pre>
     </div>`): "No feature hovered";
       // console.log(hoveredFeature ? JSON.stringify(hoveredFeature.properties.name, null, 2) : "No feature hovered")
-      let avg_cor = []
-      for(let i=0;i<hoveredFeature?.geometry?.coordinates.length;i++){
-        console.log(hoveredFeature.geometry.coordinates[i][0].length);
-        avg_cor +=  findAverage(hoveredFeature.geometry.coordinates[i])
-      }
-      console.log(avg_cor)
-      if(hoveredFeature?.geometry?.coordinates[0]){
-        let max=0;
-        let index=0;
-        for(let i=0;i<hoveredFeature.geometry.coordinates.length;i++){
-          console.log(hoveredFeature.geometry.coordinates[i][0].length)
-          if(hoveredFeature.geometry.coordinates[i][0].length > max){
-            index=i;
-            max=hoveredFeature.geometry.coordinates[i][0].length;
-          }
-        }
-        console.log("max is= "+max/10)
-        let ini=false;
-        if(max/10 <1){
-          ini =true;
-          for(let i=0;i<hoveredFeature.geometry.coordinates.length;i++){
-            console.log(hoveredFeature.geometry.coordinates[i].length)
-            if(hoveredFeature.geometry.coordinates[i].length > max){
-              index=i;
-              max=hoveredFeature.geometry.coordinates[i].length;
-            }
-          }
-        }
-        if(ini){
-          let x= findAverage(hoveredFeature?.geometry.coordinates[index]);
-          let temp = NewCenter;
-        temp.push(x)
-        setNewCenter(temp)
-          // console.log(hoveredFeature?.geometry?.coordinates[index])
-          console.log(x)
-        }else{
-          let x =findAverage(hoveredFeature?.geometry?.coordinates[index][0]);
-          let temp = NewCenter;
-        temp.push(x)
-        setNewCenter(temp)
-          // console.log(hoveredFeature?.geometry?.coordinates[index][0])
-          console.log(x)
-        }
-        
-        // console.log(max)
-        // console.log(findCentroid(hoveredFeature.geometry))
-      }
+      
 
       div.innerHTML = text;
 
@@ -110,7 +66,7 @@ const Legend = ({ hoveredFeature }) => {
 };
 
 
-function VillageMap({url,District_ID}) {
+function VillageMap({url,District_ID,centerUrl}) {
   const [geojsonData, setGeojsonData] = useState(null);
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
@@ -118,7 +74,25 @@ function VillageMap({url,District_ID}) {
   // const [map, setMap] = useState(null);
   const [hovered,sethover] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
-  const {NewCenter,setNewCenter} = useContext(MapContext)
+  // const {NewCenter,setNewCenter} = useContext(MapContext)
+  const [NewCenter,setNewCenter] = useState(null);
+  useEffect(()=>{
+    axios({
+      method: 'get',
+      url: centerUrl,
+      // responseType: 'stream'
+    })
+    .then(function (response) {
+      // console.log(response.data.data[0])
+      // setGeojsonData(response.data.data);
+      // setLoading(false);
+      console.log(response.data)
+      console.log(response.data.data[0].geometry.coordinates)
+      setNewCenter(findAverage(response.data.data[0].geometry?.coordinates))
+      console.log(NewCenter)
+      
+    });
+  })
 
   useEffect(() => {
     axios({
@@ -127,7 +101,7 @@ function VillageMap({url,District_ID}) {
       // responseType: 'stream'
     })
     .then(function (response) {
-      console.log(response.data)
+      // console.log(response.data)
       setGeojsonData(response.data.data);
       setLoading(false);
     });
@@ -213,9 +187,9 @@ function VillageMap({url,District_ID}) {
 
   return (
     <>
-    {loading?
+    {loading && NewCenter === null && geojsonData ===null ?
     <div className='flex flex-row justify-center h-full w-full items-center'><AiOutlineLoading className='animate-spin h-20 w-20 mr-3'/><p>Loading...</p></div>:
-    <MapContainer center={NewCenter[NewCenter.length-1]} zoom={9} style={{ height: '100vh', width: '100%' }} >
+    <MapContainer center={NewCenter} zoom={9} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {geojsonData && (
         <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />

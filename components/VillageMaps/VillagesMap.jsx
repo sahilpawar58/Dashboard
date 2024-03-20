@@ -138,7 +138,7 @@ const Legend = ({ hoveredFeature }) => {
 };
 
 
-function VillageMap({url,center,District_ID}) {
+function VillageMap({url,centerUrl,District_ID}) {
   const [geojsonData, setGeojsonData] = useState(null);
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
@@ -146,7 +146,20 @@ function VillageMap({url,center,District_ID}) {
   // const [map, setMap] = useState(null);
   const [hovered,sethover] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
-  const {NewCenter,setNewCenter} = useContext(MapContext);
+  const [NewCenter,setNewCenter] = useState(null);
+
+  useEffect(() => {
+    axios({
+      method: 'get',
+      url: centerUrl,
+      // responseType: 'stream'
+    })
+    .then(function (response) {
+      console.log(response.data.data)
+      setNewCenter(findAverage(response.data.data[0].geometry?.coordinates[0][0]))
+      console.log(NewCenter)
+    });
+  }, []);
 
   useEffect(() => {
     axios({
@@ -155,7 +168,7 @@ function VillageMap({url,center,District_ID}) {
       // responseType: 'stream'
     })
     .then(function (response) {
-      console.log(response.data)
+      // console.log(response.data)
       setGeojsonData(response.data.data);
       setLoading(false);
     });
@@ -239,9 +252,9 @@ function VillageMap({url,center,District_ID}) {
 
   return (
     <>
-    {loading?
+    {loading && NewCenter===null?
     <div className='flex flex-row justify-center h-full w-full items-center'><AiOutlineLoading className='animate-spin h-20 w-20 mr-3'/><p>Loading...</p></div>:
-    <MapContainer center={NewCenter[NewCenter.length-1]} zoom={10} style={{ height: '100vh', width: '100%' }} >
+    <MapContainer center={NewCenter}  zoom={10} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {geojsonData && (
         <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />

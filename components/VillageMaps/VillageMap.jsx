@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense ,useContext} from 'react';
-import { MapContainer, TileLayer, GeoJSON,useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON,useMap, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
 import axios from 'axios';
 import { AiOutlineLoading } from "react-icons/ai";
@@ -27,23 +27,7 @@ function findAverage(coords) {
   return [averageY ,averageX ];
 }
 
-const Marker =() => {
-  var marker;
-  const map = useMap();
 
-  // Function to add marker and retrieve its coordinates
-  function addMarkerAndRetrieveCoordinates(e) {
-    if (marker) {
-      map.removeLayer(marker); // Remove existing marker if any
-    }
-    marker = L.marker(e.latlng).addTo(map); // Add new marker
-    var coordinates = e.latlng.lat.toFixed(6) + ', ' + e.latlng.lng.toFixed(6); // Format coordinates
-    alert('Coordinates: ' + coordinates); // Display coordinates in an alert box
-  }
-
-  // Listen for click events on the map and call the function to add marker and retrieve coordinates
-  map.on('click', addMarkerAndRetrieveCoordinates);
-}
 const Legend = ({ hoveredFeature }) => {
   const map = useMap()
   
@@ -79,23 +63,23 @@ const Legend = ({ hoveredFeature }) => {
           ]
         };
         setVillageCoord(geoJsonData)
-        console.log(hoveredFeature.geometry.coordinates)
-        console.log("is it ?"+VillageCoord)
+        console.log(geoJsonData)
+        // console.log("is it ?"+VillageCoord)
         let max=0;
         let index=0;
         for(let i=0;i<hoveredFeature.geometry.coordinates.length;i++){
-          console.log(hoveredFeature.geometry.coordinates[i][0].length)
+          // console.log(hoveredFeature.geometry.coordinates[i][0].length)
           if(hoveredFeature.geometry.coordinates[i][0].length > max){
             index=i;
             max=hoveredFeature.geometry.coordinates[i][0].length;
           }
         }
-        console.log("max is= "+max/10)
+        // console.log("max is= "+max/10)
         let ini=false;
         if(max/10 <1){
           ini =true;
           for(let i=0;i<hoveredFeature.geometry.coordinates.length;i++){
-            console.log(hoveredFeature.geometry.coordinates[i].length)
+            // console.log(hoveredFeature.geometry.coordinates[i].length)
             if(hoveredFeature.geometry.coordinates[i].length > max){
               index=i;
               max=hoveredFeature.geometry.coordinates[i].length;
@@ -155,9 +139,9 @@ function VillageMap({url,centerUrl,District_ID}) {
       // responseType: 'stream'
     })
     .then(function (response) {
-      console.log(response.data.data)
+      // console.log(response.data.data)
       setNewCenter(findAverage(response.data.data[0].geometry?.coordinates[0][0]))
-      console.log(NewCenter)
+      // console.log(NewCenter)
     });
   }, []);
 
@@ -168,7 +152,8 @@ function VillageMap({url,centerUrl,District_ID}) {
       // responseType: 'stream'
     })
     .then(function (response) {
-      // console.log(response.data)
+      // console.log(response.data.data[0].properties.NAME)
+      // localStorage.setItem('village', phoneNumber);
       setGeojsonData(response.data.data);
       setLoading(false);
     });
@@ -214,6 +199,13 @@ function VillageMap({url,centerUrl,District_ID}) {
     // setHoveredFeature(layer.feature);
     // clearTimeout(timeoutId); // Clear any existing timeout
     setHoveredFeature(layer.feature);
+    console.log(layer.feature.properties)
+    // console.log()
+    localStorage.setItem('Village', layer.feature.properties.NAME);
+    
+    localStorage.setItem('District_ID', layer.feature.properties.District_ID);
+    localStorage.setItem('Tehsil_NO', layer.feature.properties.Tehsil_NO);
+    // localStorage.setItem('village', layer.feature);
 
     // // Delay the update of the hovered feature state
     // timeoutId = setTimeout(() => {
@@ -260,7 +252,8 @@ function VillageMap({url,centerUrl,District_ID}) {
         <GeoJSON data={geojsonData} style={style} onEachFeature={onEachFeature} />
       )}
        <Legend hoveredFeature={hoveredFeature}/>
-       {/* <Marker /> */}
+       <Marker position={[19.3838909,72.8265966]}>
+        </Marker>
        
     </MapContainer>}
     </>

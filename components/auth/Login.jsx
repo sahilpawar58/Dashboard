@@ -4,10 +4,17 @@ import axios from "axios";
 import { toast,ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Cookies from 'js-cookie';
 
 export default function Login() {
   
   const navigate = useNavigate();
+  const [visible, setVisible] = useState(false);
+  const [password, setPassword] = useState('');
+
+  const toggleVisibility = () => {
+    setVisible(!visible);
+  };
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,11 +37,11 @@ export default function Login() {
         async () => {
           const response = await axios.post(
             "http://localhost:3000/api/v1/user/login",
-            formData
+            formData,
+            { withCredentials: true } 
           );
+          console.log(response.data.data.accessToken)
           const { accessToken, refreshToken } = response.data.data;
-          document.cookie.accessToken = `accessToken=${accessToken}`;
-          document.cookie.refreshToken = `refreshToken=${refreshToken}`;
       
           return response.data; // Return data from the Axios response
         },
@@ -54,7 +61,7 @@ export default function Login() {
 
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             className="mx-auto h-10 w-auto"
@@ -81,7 +88,7 @@ export default function Login() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -91,26 +98,32 @@ export default function Login() {
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                   Password
                 </label>
-                <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                    Forgot password?
-                  </a>
-                </div>
+               
               </div>
               <div className="mt-2 relative">
                 <input
                   id="password"
                   name="password"
-                  type="password"
                   autoComplete="current-password"
                   required
+                  type={visible ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 pl-3 pr-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
-                  <FaEye className="text-gray-400 hover:text-gray-500 cursor-pointer" />
-                  <FaEyeSlash className="text-gray-400 hover:text-gray-500 cursor-pointer" />
+                {visible ? (
+                <FaEyeSlash
+                  className="text-gray-400 hover:text-gray-500 cursor-pointer"
+                  onClick={toggleVisibility}
+                />
+              ) : (
+                <FaEye
+                  className="text-gray-400 hover:text-gray-500 cursor-pointer"
+                  onClick={toggleVisibility}
+                />
+              )}
+                 
                 </div>
               </div>
             </div>

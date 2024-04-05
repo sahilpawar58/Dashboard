@@ -5,7 +5,7 @@ import {Link,NavLink} from 'react-router-dom'
 
 export default function Scrollbar() {
   return (
-    <div className='w-24 h-fit bg-slate-300 mt-2'>
+    <div className='w-24 h-fit bg-slate-300'>
         {/* <Scrollitems title= source= link="/dashboard"/>
         <Scrollitems title="Machine Learning" source="../brain.png" link="ml"/> */}
 

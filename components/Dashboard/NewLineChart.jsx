@@ -1,21 +1,83 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
+import axios from 'axios';
 
-export default function NewLineChart() {
-  const canvasRef = useRef(null);
+const Switcher = () => {
+  const [isChecked, setIsChecked] = useState(false)
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked)
+  }
+
+  return (
+    <>
+      <label className='autoSaverSwitch relative inline-flex cursor-pointer select-none items-center'>
+        <input
+          type='checkbox'
+          name='autoSaver'
+          className='sr-only'
+          checked={isChecked}
+          onChange={handleCheckboxChange}
+        />
+        <span
+          className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${
+            isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
+          }`}
+        >
+          <span
+            className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${
+              isChecked ? 'translate-x-6' : ''
+            }`}
+          ></span>
+        </span>
+        <span className='label flex items-center text-sm font-medium text-black'>
+          State <span className='pl-1'> {isChecked ? 'On' : 'Off'} </span>
+        </span>
+      </label>
+    </>
+  )
+}
+
+export default function NewLineChart({url,width,type,label}) {
+  const canvasRefone = useRef(null);
+  const canvasReftwo = useRef(null);
   const prevTimestampRef = useRef(null);
-  const realpHRef = useRef(null);
-  const pH = useRef(null);
+  const node_onechart = useRef(null);
+  const node_twochart = useRef(null);
+  const node_1 = useRef(null);
+  const node_2 = useRef(null);
+
+  const getData = async () => {
+    const response = await axios.get(
+      url,
+      { withCredentials: true } 
+    );
+    return await response.data.data;
+  };
 
   useEffect(() => {
-    const ctx = canvasRef.current.getContext("2d");
-    ctx.canvas.width = pH.current.clientWidth;
-    ctx.canvas.height = pH.current.clientHeight;
+    const ctx = canvasRefone.current.getContext("2d");
+    ctx.canvas.width = node_1.current.clientWidth;
+    ctx.canvas.height = node_1.current.clientHeight;
 
-    const data = {
+    const ctxtwo = canvasReftwo.current.getContext("2d");
+    ctxtwo.canvas.width = node_2.current.clientWidth;
+    ctxtwo.canvas.height = node_2.current.clientHeight;
+
+    const datanode_one = {
       labels: [],
       datasets: [{
-        label: "pH",
+        label: label,
+        borderColor: "rgb(75, 192, 192)",
+        data: [],
+        fill: false
+      }]
+    };
+
+    const datanode_two = {
+      labels: [],
+      datasets: [{
+        label: label,
         borderColor: "rgb(75, 192, 192)",
         data: [],
         fill: false
@@ -30,7 +92,7 @@ export default function NewLineChart() {
         },
         title: {
           display: true,
-          text: 'pH Readings'
+          text: type
         }
       },
       scales: {
@@ -41,15 +103,24 @@ export default function NewLineChart() {
       }
     };
 
-    realpHRef.current = new Chart(ctx, {
+    node_onechart.current = new Chart(ctx, {
       type: 'line',
-      data: data,
+      data: datanode_one,
+      options: options
+    });
+
+    node_twochart.current = new Chart(ctxtwo, {
+      type: 'line',
+      data: datanode_two,
       options: options
     });
 
     return () => {
-      if (realpHRef.current) {
-        realpHRef.current.destroy();
+      if (node_onechart.current) {
+        node_onechart.current.destroy();
+      }
+      if (node_twochart.current) {
+        node_twochart.current.destroy();
       }
     };
   }, []);
@@ -57,21 +128,36 @@ export default function NewLineChart() {
   useEffect(() => {
     const addData = async () => {
       const newData = await getData();
+      console.log(newData)
       if (newData.Timestamp !== prevTimestampRef.current) {
-        realpHRef.current.data.labels.push(getLabel(newData.Timestamp));
-        realpHRef.current.data.datasets[0].data.push(newData.Readings);
+        node_onechart.current.data.labels.push(getLabel(newData.Timestamp));
+        node_onechart.current.data.datasets[0].data.push(newData.Readings.NODE_1.Liters);
 
-        if (realpHRef.current.data.labels.length > 10) {
-          realpHRef.current.data.labels.shift();
-          realpHRef.current.data.datasets[0].data.shift();
+        if (node_onechart.current.data.labels.length > 10) {
+          node_onechart.current.data.labels.shift();
+          node_onechart.current.data.datasets[0].data.shift();
         }
 
-        realpHRef.current.update();
-        prevTimestampRef.current = newData.Timestamp;
+        node_onechart.current.update();
+        //prevTimestampRef.current = newData.Timestamp;
       }
+      
+      if (newData.Timestamp !== prevTimestampRef.current) {
+        node_twochart.current.data.labels.push(getLabel(newData.Timestamp));
+        node_twochart.current.data.datasets[0].data.push(newData.Readings.NODE_2.Liters);
+
+        if (node_twochart.current.data.labels.length > 10) {
+          node_twochart.current.data.labels.shift();
+          node_twochart.current.data.datasets[0].data.shift();
+        }
+
+        node_twochart.current.update();
+        
+      }
+      prevTimestampRef.current = newData.Timestamp;
     };
 
-    const interval = setInterval(addData, 5000);
+    const interval = setInterval(addData, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -83,18 +169,39 @@ export default function NewLineChart() {
     return `${hours}:${minutes}`;
   };
 
-  const getData = async () => {
-    const response = await fetch("http://127.0.0.1:4000/api/data", {
-      credentials: 'include' // Include cookies in the request
-    });
-    return await response.json();
-  };
+  
+
+ 
   
 
   return (
     <>
-    <div ref={pH} style={{ width:"80vw",height: "40vh" }} className=' border-solid border-2 border-indigo-600 m-8'>
-      <canvas id="realflow" ref={canvasRef}></canvas>
+    <div ref={node_1} style={{ width:width,height: "40vh" }} className=' border-solid border-2 border-indigo-600 m-2 '>
+      <canvas id="realflow1" ref={canvasRefone}></canvas>
+    </div>
+    <div class='flex justify-between'>
+        <div class='flex flex-col items-center  p-4 rounded-lg shadow-md mr-4'>
+            <p class='font-semibold '>Desired litres</p>
+            <p class=''>200</p>
+        </div>
+        <div class='flex flex-col items-center  p-4 rounded-lg shadow-md'>
+            <p class='font-semibold '>Solonoid</p>
+            <Switcher />
+        </div>
+    </div>
+
+    <div ref={node_2} style={{ width:width,height: "40vh" }} className=' border-solid border-2 border-indigo-600 m-2 '>
+      <canvas id="realflow2" ref={canvasReftwo}></canvas>
+    </div>
+    <div class='flex justify-between'>
+        <div class='flex flex-col items-center  p-4 rounded-lg shadow-md mr-4'>
+            <p class='font-semibold '>Desired litres</p>
+            <p class=''>200</p>
+        </div>
+        <div class='flex flex-col items-center  p-4 rounded-lg shadow-md'>
+            <p class='font-semibold '>Solonoid</p>
+            <Switcher />
+        </div>
     </div>
     </>
   );

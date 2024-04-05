@@ -1,6 +1,6 @@
 import React from 'react'
 import '../../src/App.css'
-import VillageMap from './VillagesMap'
+import VillageMap from './VillageMap'
 import { useParams } from 'react-router-dom';
 
 export default function VillageMapContianer({url,center,centerUrl}) {

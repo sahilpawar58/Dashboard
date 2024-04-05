@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useContext,useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -15,6 +15,8 @@ import {
   RouterProvider,
   Route,
   Link,
+  Navigate,
+  Outlet
 } from "react-router-dom";
 import StateMapContianer from '../components/StateMap/StateMapContianer'
 import RealTimeDashboard from '../components/Dashboard/RealTimeDashboard'
@@ -25,6 +27,12 @@ import DetailedMapContainer from '../components/DetailedMap/DetailedMapContainer
 import LandingPage from '../components/Landing/LandingPage'
 import Login from '../components/auth/Login'
 import Complaint from '../components/Complaint/Complaint'
+import VerifyAuth from '../components/auth/VerifyAuth'
+import AuthContextProvider from '../components/context/AuthContextProvider'
+import AuthContext from '../components/context/AuthContext'
+import axios from 'axios'
+import Profile from '../components/Profile/Profile'
+import VillageInfo from '../components/Profile/VillageInfo'
 // import NewLineChart from '../components/RealTimeDashboard/NewLineChart'
 
 // function Login() {
@@ -112,6 +120,78 @@ import Complaint from '../components/Complaint/Complaint'
 //     </>
 //   )
 // }
+async function verifyUser(){
+  try{
+      const response = await axios.post(
+          "http://localhost:3000/api/v1/user/verify",
+          null, // Since we are not sending any data in the body, pass null or an empty object
+          { withCredentials: true } 
+        );
+        console.log(response)
+        return response;
+  }catch(e){
+          return {};
+  }
+}
+
+
+
+const PrivateRoutes = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true); // Track loading state
+    const {user,setUser,village,setVillage} = useContext(AuthContext);
+
+    useEffect(() => {
+      const setAuthentication = async () => {
+          try {
+              const response = await axios.post(
+                  "http://localhost:3000/api/v1/user/verify",
+                  { /* Optional data to send in the request body */ },
+                  { withCredentials: true }
+              );
+              let villageinfo = null; // Initialize villageinfo outside the if block
+              console.log(response.data.data._id)
+              if (response && response.data ) {
+                  villageinfo = await axios.post(
+                      "http://localhost:3000/api/v1/geojson/villageinfo",
+                      { "id": response.data.data._id },
+                      { withCredentials: true }
+                  );
+              }
+              // console.log(villageinfo)
+              if (response.status === 200 && villageinfo && villageinfo.status === 200) {
+                  setIsAuthenticated(true);
+                  setUser(response.data);
+                  setVillage(villageinfo.data.data);
+                  // console.log(villageinfo.data);
+                  // console.log(response.data);
+              } else {
+                  setIsAuthenticated(false);
+              }
+          } catch (error) {
+              console.error("Error setting authentication:", error);
+              setIsAuthenticated(false);
+          } finally {
+              // Once the authentication check is complete, set loading to false
+              setLoading(false);
+          }
+      };
+  
+      setAuthentication();
+  }, []);
+  
+
+    // If loading, return a loading indicator or skeleton UI
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    // Once loading is complete, return either Outlet or Navigate based on authentication status
+    return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+};
+
+
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -152,14 +232,22 @@ const router = createBrowserRouter(
             <DetailedMap />
           </DetailedMapContainer>
            }/>
-           <Route path="/Dashboard" element={
-          <>
+
+          {/* <Route element={<AuthContextProvider><PrivateRoutes /></AuthContextProvider>}>
+          <Route element={<RealTimeDashboard/>} path="/dashboard" exact/>
+          <Route element={<VillageInfo />} path="/info" /></Route>
+          <Route element={<Profile/>} path="/profile" /></Route>
           
-          <RealTimeDashboard />
-          </>
-          }/>
+          <Route element={<Complaint />} path="reports"/> */}
+
+          <Route element={<AuthContextProvider><PrivateRoutes /></AuthContextProvider>}>
+          <Route element={<RealTimeDashboard/>} path='/dashboard'/>
+          <Route element={<Profile/>} path="/profile" />
+          <Route element={<VillageInfo />} path="/info" />
+
+          </Route>
           
-         </Route>
+          </Route>
           
     </Route>
   )

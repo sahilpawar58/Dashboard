@@ -1,40 +1,253 @@
-import React, { useState, useRef } from 'react';
+import React, { useState,useEffect,useRef } from 'react';
 import axios from 'axios';
 
-function Complaint() {
-  const phone = useRef();
+function Dropdownvillage({ url,data, label, onSelect }) {
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOption, setSelectedOption] = useState('');
+  const dataparam = {
+    tehsil: data.toLowerCase()
+  };
 
-  let handleClick = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    const phoneNumber = phone.current.value;
-    console.log(phoneNumber)
-    
-    try {
-      // Make a POST request to your API endpoint
-      const response = await axios.post('YOUR_API_ENDPOINT', {
-        phoneNumber: phoneNumber
+  useEffect(() => {
+    // Fetch data from API
+    fetch(url,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json' // Specify content type as JSON
+      },
+      body: JSON.stringify(dataparam)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setOptions(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('There was a problem fetching the data:', error);
+        setLoading(false);
       });
-      
-      // Handle the response
-      console.log('Response:', response.data);
-      
-      // Add any additional logic here based on the response
-      
-    } catch (error) {
+  }, [url]);
+
+  const handleOptionChange = event => {
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+    onSelect(selectedValue);
+  };
+
+  return (
+    <div>
+      <label htmlFor="dropdown">{label}:</label>
+      <select id="dropdown" value={selectedOption} onChange={handleOptionChange} disabled={loading}>
+        {loading ? (
+          <option value="">Loading...</option>
+        ) : (
+          <>
+            <option value="">Select an option</option>
+            {options.map(option => (
+              <option key={option._id} value={option.name}>
+                {option.name}
+              </option>
+            ))}
+          </>
+        )}
+      </select>
+    </div>
+  );
+}
+
+function Dropdownpost({ url,data, label, onSelect }) {
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOption, setSelectedOption] = useState('');
+  const dataparam = {
+    district: data.toLowerCase()
+  };
+
+  useEffect(() => {
+    // Fetch data from API
+    fetch(url,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json' // Specify content type as JSON
+      },
+      body: JSON.stringify(dataparam)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setOptions(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('There was a problem fetching the data:', error);
+        setLoading(false);
+      });
+  }, [url]);
+
+  const handleOptionChange = event => {
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+    onSelect(selectedValue);
+  };
+
+  return (
+    <div>
+      <label htmlFor="dropdown">{label}:</label>
+      <select id="dropdown" value={selectedOption} onChange={handleOptionChange} disabled={loading}>
+        {loading ? (
+          <option value="">Loading...</option>
+        ) : (
+          <>
+            <option value="">Select an option</option>
+            {options.map(option => (
+              <option key={option._id} value={option.tehsil}>
+                {option.tehsil}
+              </option>
+            ))}
+          </>
+        )}
+      </select>
+    </div>
+  );
+}
+
+function Dropdown({ url, label, onSelect }) {
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOption, setSelectedOption] = useState('');
+
+  useEffect(() => {
+    // Fetch data from API
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setOptions(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('There was a problem fetching the data:', error);
+        setLoading(false);
+      });
+  }, [url]);
+
+  const handleOptionChange = event => {
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+    onSelect(selectedValue);
+  };
+
+  return (
+    <div>
+      <label htmlFor="dropdown">{label}:</label>
+      <select id="dropdown" value={selectedOption} onChange={handleOptionChange} disabled={loading}>
+        {loading ? (
+          <option value="">Loading...</option>
+        ) : (
+          <>
+            <option value="">Select an option</option>
+            {options.map(option => (
+              <option key={option._id} value={option.district}>
+                {option.district}
+              </option>
+            ))}
+          </>
+        )}
+      </select>
+    </div>
+  );
+}
+
+
+function Complaint() {
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedTehsil, setSelectedTesil] = useState('');
+  const [selectedVillage,setSelectedVillage] = useState('');
+  const complaint = useRef(null);
+
+  const handleDistrictChange = value => {
+    setSelectedDistrict(value);
+  };
+
+  const handleTehsilChange = value => {
+    setSelectedTesil(value);
+  };
+
+  const handleVillageChange = value => {
+    setSelectedVillage(value);
+  };
+
+  const data = {
+    district:selectedDistrict,
+    tehsil:selectedTehsil,
+    village:selectedVillage,
+    complaint:complaint.current.value
+  };
+
+  const handleClick = () => {
+    // Replace 'your_api_endpoint' with your actual API endpoint
+    axios.post('http://localhost:3000/api/v1/sensor/makecomplaint',data, {
+      headers: {
+        'Content-Type': 'application/json' // Specify content type as JSON
+      }
+    })
+    .then(response => {
+      // Handle successful response
+      console.log('Response:', response);
+      const responseData = response.data;
+      const message = `Complaint submitted successfully!`;
+    // You can do more with the response data here
+
+    // Show the response message to the user (for example, using alert)
+      alert(message);
+    })
+    .catch(error => {
+      // Handle error
       console.error('Error:', error);
-      // Handle error appropriately
-    }
+    });
   }
 
   return (
     <div>
-      <form onSubmit={handleClick} class="max-w-md mx-auto">
-        <div class="relative z-0 w-full mb-5 group">
-          <input ref={phone} type="number" name="floating_email" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-          <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone Number</label>
-        </div>
-        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-      </form>
+      <Dropdown
+        url="http://localhost:3000/api/v1/geojson/getdistricts"
+        label="Select District"
+        onSelect={handleDistrictChange}
+      />
+      {selectedDistrict && <Dropdownpost
+        url="http://localhost:3000/api/v1/geojson/gettehsils"
+        label="Select Tehsil"
+        data={selectedDistrict}
+        onSelect={handleTehsilChange}
+      />}
+
+      {selectedTehsil && <Dropdownvillage
+        url="http://localhost:3000/api/v1/geojson/getvillages"
+        label="Select Tehsil"
+        data={selectedTehsil}
+        onSelect={handleVillageChange}
+      />}
+
+      
+      <p>Selected District: {selectedDistrict}</p>
+      <p>Selected City: {selectedTehsil}</p>
+      <p>Selected Village: {selectedVillage}</p>
+      <textarea ref={complaint} className='border-lg'></textarea>
+      <button  onClick={handleClick}>submit</button>
     </div>
   );
 }

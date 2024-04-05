@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef,useState } from 'react';
 import Chart from 'chart.js/auto';
 import axios from 'axios';
 
@@ -46,6 +46,7 @@ export default function NewLineChart({url,width,type,label}) {
   const node_twochart = useRef(null);
   const node_1 = useRef(null);
   const node_2 = useRef(null);
+  const [data,setData] = useState(null);
 
   const getData = async () => {
     const response = await axios.get(
@@ -128,7 +129,8 @@ export default function NewLineChart({url,width,type,label}) {
   useEffect(() => {
     const addData = async () => {
       const newData = await getData();
-      console.log(newData)
+      console.log(newData);
+      setData(newData)
       if (newData.Timestamp !== prevTimestampRef.current) {
         node_onechart.current.data.labels.push(getLabel(newData.Timestamp));
         node_onechart.current.data.datasets[0].data.push(newData.Readings.NODE_1.Liters);
@@ -182,7 +184,7 @@ export default function NewLineChart({url,width,type,label}) {
     <div class='flex justify-between'>
         <div class='flex flex-col items-center  p-4 rounded-lg shadow-md mr-4'>
             <p class='font-semibold '>Desired litres</p>
-            <p class=''>200</p>
+            <p class=''>{data?.Readings?.NODE_1?data?.Readings?.NODE_1.DesiredLitres:''}</p>
         </div>
         <div class='flex flex-col items-center  p-4 rounded-lg shadow-md'>
             <p class='font-semibold '>Solonoid</p>
@@ -196,7 +198,7 @@ export default function NewLineChart({url,width,type,label}) {
     <div class='flex justify-between'>
         <div class='flex flex-col items-center  p-4 rounded-lg shadow-md mr-4'>
             <p class='font-semibold '>Desired litres</p>
-            <p class=''>200</p>
+            <p class=''>{data?.Readings?.NODE_2?data?.Readings?.NODE_2.DesiredLitres:''}</p>
         </div>
         <div class='flex flex-col items-center  p-4 rounded-lg shadow-md'>
             <p class='font-semibold '>Solonoid</p>

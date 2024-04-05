@@ -72,7 +72,7 @@ export default function Scrollbar() {
 
         <div className='h-32 flex flex-col justify-center items-center border-b-2 border-slate-500'>
         <NavLink
-          to="/reports"
+          to="/checkcomplaints"
           style={({ isActive, isPending, isTransitioning }) => {
             return {
               color: isActive ? "orange" : "black",
@@ -82,6 +82,21 @@ export default function Scrollbar() {
           }}>
           <div className=' p-2 box-content'><img className="h-16 w-16" src="../review.png"></img></div>
           <div className='p-2'><p>Complains </p></div>
+        </NavLink>
+        </div>
+
+        <div className='h-32 flex flex-col justify-center items-center border-b-2 border-slate-500'>
+        <NavLink
+          to="/checkcomplaints"
+          style={({ isActive, isPending, isTransitioning }) => {
+            return {
+              color: isActive ? "orange" : "black",
+              viewTransitionName: isTransitioning ? "slide" : "",
+              fontWeight: isActive ? "bold" : "",
+            };
+          }}>
+          <div className=' p-2 box-content'><img className="h-16 w-16" src="../review.png"></img></div>
+          <div className='p-2'><p>Analysis </p></div>
         </NavLink>
         </div>
     </div>

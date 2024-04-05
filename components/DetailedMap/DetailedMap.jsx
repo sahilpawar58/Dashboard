@@ -79,12 +79,15 @@ function DetailedMap({url,center,District_ID}) {
       // fillColor: "#FFFFFF"
     };
   }
-  
   function redirectToPage(feature) {
-    const District_ID = feature.properties.District_ID;
-    const Tehsil_NO = feature.properties.Tehsil_NO;
-    navigate(`/villages/${District_ID}/${Tehsil_NO}`);
+    navigate(`/dashboard`);
   }
+  
+  // function redirectToPage(feature) {
+  //   const District_ID = feature.properties.District_ID;
+  //   const Tehsil_NO = feature.properties.Tehsil_NO;
+  //   navigate(`/villages/${District_ID}/${Tehsil_NO}`);
+  // }
 
   function onEachFeature(feature, layer) {
     layer.on({
@@ -104,7 +107,7 @@ function DetailedMap({url,center,District_ID}) {
       {geojsonData &&
         (<GeoJSON data={geojsonData}  style={style} onEachFeature={onEachFeature} />)
       }
-       <Marker position={[19.384336, 72.828992]} />
+       <Marker position={[19.384336, 72.828992]} onClick={redirectToPage}/>
        
        
     </MapContainer>}

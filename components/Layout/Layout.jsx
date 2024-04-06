@@ -9,7 +9,7 @@ export default function Layout() {
     <>
     <Header />
     <div className='flex flex-row'>
-    <Scrollbar/>
+   
     <Outlet />
     </div> 
     </>

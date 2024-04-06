@@ -177,7 +177,7 @@ function Complaint() {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedTehsil, setSelectedTesil] = useState('');
   const [selectedVillage,setSelectedVillage] = useState('');
-  const complaint = useRef(null);
+  const selectedComplaint = useRef(null);
 
   const handleDistrictChange = value => {
     setSelectedDistrict(value);
@@ -191,14 +191,16 @@ function Complaint() {
     setSelectedVillage(value);
   };
 
-  const data = {
-    district:selectedDistrict,
-    tehsil:selectedTehsil,
-    village:selectedVillage,
-    complaint:complaint.current.value
-  };
+  
 
   const handleClick = () => {
+    const data = {
+      district:selectedDistrict,
+      tehsil:selectedTehsil,
+      village:selectedVillage,
+      complaint:selectedComplaint?.current?.value
+    };
+    
     // Replace 'your_api_endpoint' with your actual API endpoint
     axios.post('http://localhost:3000/api/v1/sensor/makecomplaint',data, {
       headers: {
@@ -220,7 +222,7 @@ function Complaint() {
       console.error('Error:', error);
     });
   }
-
+  
   return (
     <div>
       <Dropdown
@@ -246,7 +248,7 @@ function Complaint() {
       <p>Selected District: {selectedDistrict}</p>
       <p>Selected City: {selectedTehsil}</p>
       <p>Selected Village: {selectedVillage}</p>
-      <textarea ref={complaint} className='border-lg'></textarea>
+      <textarea ref={selectedComplaint} className='border-lg'></textarea>
       <button  onClick={handleClick}>submit</button>
     </div>
   );

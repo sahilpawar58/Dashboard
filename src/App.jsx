@@ -241,7 +241,7 @@ const router = createBrowserRouter(
           
           <Route element={<Complaint />} path="reports"/> */}
 
-          <Route element={<AuthContextProvider><PrivateRoutes /></AuthContextProvider>}>
+          <Route element={<AuthContextProvider> <Scrollbar/><PrivateRoutes /></AuthContextProvider>}>
           <Route element={<RealTimeDashboard/>} path='/dashboard'/>
           <Route element={<Profile/>} path="/profile" />
           <Route element={<VillageInfo />} path="/info" />

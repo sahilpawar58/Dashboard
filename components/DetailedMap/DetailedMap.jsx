@@ -1,13 +1,10 @@
-import React, { useEffect, useState, Suspense ,useContext} from 'react';
-import { MapContainer, TileLayer, GeoJSON,useMap,Marker } from 'react-leaflet';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
 import axios from 'axios';
 import { AiOutlineLoading } from "react-icons/ai";
-import '../../src/App.css';
-import { useNavigate,useParams } from 'react-router-dom';
-// import Legend from '../Legend/Legend';
 import L from 'leaflet';
-import MapContext from '../context/MapContext'
+import { useNavigate } from 'react-router-dom';
 
 function findAverage(coords) {
   let totalX = 0;
@@ -27,26 +24,6 @@ function findAverage(coords) {
   return [averageY ,averageX ];
 }
 
-// const Marker =() => {
-//   var marker;
-//   const map = useMap();
-
-//   // Function to add marker and retrieve its coordinates
-//   function addMarkerAndRetrieveCoordinates(e) {
-//     if (marker) {
-//       map.removeLayer(marker); // Remove existing marker if any
-//     }
-//     marker = L.marker(e.latlng).addTo(map); // Add new marker
-//     var coordinates = e.latlng.lat.toFixed(6) + ', ' + e.latlng.lng.toFixed(6); 
-//     console.log(coordinates)
-//   }
-
-//   // Listen for click events on the map and call the function to add marker and retrieve coordinates
-//   map.on('click', addMarkerAndRetrieveCoordinates);
-// }
-
-
-
 function DetailedMap({url,center,District_ID}) {
   const [geojsonData, setGeojsonData] = useState(null);
   const [loading,setLoading] = useState(true);
@@ -56,9 +33,9 @@ function DetailedMap({url,center,District_ID}) {
 
   useEffect(() => {
     axios.post('http://localhost:3000/api/v1/geojson/village', {
-    districtID: localStorage.getItem("District_ID") || 11,
-    tehsilID: localStorage.getItem("Tehsil_NO") || 9,
-    name: localStorage.getItem("Village") || "Birsola"
+      districtID: localStorage.getItem("District_ID") || 11,
+      tehsilID: localStorage.getItem("Tehsil_NO") || 9,
+      name: localStorage.getItem("Village") || "Birsola"
     })  
     .then(function (response) {
       setGeojsonData(response.data.data);
@@ -66,8 +43,12 @@ function DetailedMap({url,center,District_ID}) {
       setNewCenter(findAverage(response.data.data[0].geometry.coordinates[0]))
       setLoading(false);
     });
-  })
+  }, []);
 
+  function redirectToPage() {
+    console.log('hiii')
+    navigate(`/dashboard`);
+  }
 
   function style(feature) {
     return {
@@ -76,27 +57,9 @@ function DetailedMap({url,center,District_ID}) {
       color: 'grey',
       dashArray: '',
       fillOpacity: 0.4,
-      // fillColor: "#FFFFFF"
     };
   }
-  function redirectToPage(feature) {
-    navigate(`/dashboard`);
-  }
   
-  // function redirectToPage(feature) {
-  //   const District_ID = feature.properties.District_ID;
-  //   const Tehsil_NO = feature.properties.Tehsil_NO;
-  //   navigate(`/villages/${District_ID}/${Tehsil_NO}`);
-  // }
-
-  function onEachFeature(feature, layer) {
-    layer.on({
-      // mouseover: (e) => {highlightFeature(e)},
-      // mouseout: (e) => {resetHighlight(e)},
-      // click: () => redirectToPage(feature),
-    });
-  }
-
   return (
     <>
     {loading ?
@@ -105,11 +68,13 @@ function DetailedMap({url,center,District_ID}) {
      <MapContainer center={NewCenter} zoom={14} style={{ height: '100vh', width: '100%' }} >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {geojsonData &&
-        (<GeoJSON data={geojsonData}  style={style} onEachFeature={onEachFeature} />)
+        (<GeoJSON data={geojsonData}  style={style} />)
       }
-       <Marker position={[19.384336, 72.828992]} onClick={redirectToPage}/>
-       
-       
+       <Marker position={[19.384336, 72.828992]}>
+         <Popup>
+           <button onClick={redirectToPage}>Click me</button>
+         </Popup>
+       </Marker>
     </MapContainer>}
     </>
   );

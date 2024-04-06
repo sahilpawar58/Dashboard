@@ -224,33 +224,54 @@ function Complaint() {
   }
   
   return (
-    <div>
-      <Dropdown
-        url="http://localhost:3000/api/v1/geojson/getdistricts"
-        label="Select District"
-        onSelect={handleDistrictChange}
-      />
-      {selectedDistrict && <Dropdownpost
-        url="http://localhost:3000/api/v1/geojson/gettehsils"
-        label="Select Tehsil"
-        data={selectedDistrict}
-        onSelect={handleTehsilChange}
-      />}
+    <div className="flex flex-col h-screen w-screen items-center justify-center">
+    <div className="h-auto w-96">
+    <div className="flex flex-col space-y-4">
+  <Dropdown
+    url="http://localhost:3000/api/v1/geojson/getdistricts"
+    label="Select District"
+    onSelect={handleDistrictChange}
+  />
+  
+  {selectedDistrict && (
+    <Dropdownpost
+      url="http://localhost:3000/api/v1/geojson/gettehsils"
+      label="Select Tehsil"
+      data={selectedDistrict}
+      onSelect={handleTehsilChange}
+    />
+  )}
 
-      {selectedTehsil && <Dropdownvillage
-        url="http://localhost:3000/api/v1/geojson/getvillages"
-        label="Select Tehsil"
-        data={selectedTehsil}
-        onSelect={handleVillageChange}
-      />}
+  {selectedTehsil && (
+    <Dropdownvillage
+      url="http://localhost:3000/api/v1/geojson/getvillages"
+      label="Select Tehsil"
+      data={selectedTehsil}
+      onSelect={handleVillageChange}
+    />
+  )}
 
-      
-      <p>Selected District: {selectedDistrict}</p>
-      <p>Selected City: {selectedTehsil}</p>
-      <p>Selected Village: {selectedVillage}</p>
-      <textarea ref={selectedComplaint} className='border-lg'></textarea>
-      <button  onClick={handleClick}>submit</button>
-    </div>
+  <div className="flex flex-col space-y-2">
+    <p className="text-lg">Selected District: {selectedDistrict}</p>
+    <p className="text-lg">Selected Tehsil: {selectedTehsil}</p>
+    <p className="text-lg">Selected Village: {selectedVillage}</p>
+  </div>
+
+  <textarea
+    ref={selectedComplaint}
+    className="border border-gray-300 rounded-lg p-2"
+    placeholder="Enter your complaint..."
+  ></textarea>
+
+  <button
+    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+    onClick={handleClick}
+  >
+    Submit
+  </button>
+</div>
+</div>
+</div>
   );
 }
 

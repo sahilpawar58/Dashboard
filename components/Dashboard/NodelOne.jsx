@@ -39,8 +39,8 @@ const Switcher = () => {
 
 function NodelOne() {
   return (
-    <div class='flex flex-col justify-center items-center  p-2 rounded-lg shadow-lg'>
-    <p class='font-bold  text-xl mb-4'>Node One</p>
+    <div name="Node" class='flex flex-col justify-center  items-center p-2 rounded-lg shadow-lg' >
+    
     <NewLineChart url="http://localhost:3000/api/v1/sensor/getdata" width="90vw" type="FlowMeter" label="Ltr"/>
     
 </div>

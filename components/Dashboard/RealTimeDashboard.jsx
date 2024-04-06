@@ -36,7 +36,7 @@ const RealtimeDashboard = () => {
   // console.log(response.status)
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col " name="Real">
       <NodelOne />
     </div>
   );

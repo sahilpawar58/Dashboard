@@ -20,12 +20,12 @@ const Switcher = () => {
           onChange={handleCheckboxChange}
         />
         <span
-          className={`slider mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${
-            isChecked ? 'bg-primary' : 'bg-[#CCCCCE]'
+          className={`slider mr-3 flex h-[26px] w-[50px] border-md items-center rounded-full p-1 duration-200 ${
+            isChecked ? 'bg-[#CCCCCE]' : 'bg-[#CCCCCE]'
           }`}
         >
           <span
-            className={`dot h-[18px] w-[18px] rounded-full bg-white duration-200 ${
+            className={`dot h-[18px] w-[18px] rounded-full border-md bg-[#ffffff]  duration-200 ${
               isChecked ? 'translate-x-6' : ''
             }`}
           ></span>
@@ -178,6 +178,7 @@ export default function NewLineChart({url,width,type,label}) {
 
   return (
     <>
+    <p class='font-bold  text-xl mb-4'>Node One</p>
     <div ref={node_1} style={{ width:width,height: "40vh" }} className=' border-solid border-2 border-indigo-600 m-2 '>
       <canvas id="realflow1" ref={canvasRefone}></canvas>
     </div>
@@ -192,6 +193,8 @@ export default function NewLineChart({url,width,type,label}) {
         </div>
     </div>
 
+    <p class='font-bold  text-xl m-4'>Node two</p>
+
     <div ref={node_2} style={{ width:width,height: "40vh" }} className=' border-solid border-2 border-indigo-600 m-2 '>
       <canvas id="realflow2" ref={canvasReftwo}></canvas>
     </div>
@@ -203,6 +206,16 @@ export default function NewLineChart({url,width,type,label}) {
         <div class='flex flex-col items-center  p-4 rounded-lg shadow-md'>
             <p class='font-semibold '>Solonoid</p>
             <Switcher />
+        </div>
+    </div>
+    <div class='flex justify-between w-full'>
+        <div class='flex flex-col w-1/2 items-center  p-4 rounded-lg border-slate-800 shadow-md mr-4'>
+            <p class='font-semibold '>Desired litres</p>
+            <p class=''>{data?.Readings?.NODE_2?data?.Readings?.TANK.Turbidity_remark:''}</p>
+        </div>
+        <div class='flex flex-col w-1/2 items-center  p-4 rounded-lg shadow-md mr-4'>
+            <p class='font-semibold '>Desired litres</p>
+            <p class=''>{data?.Readings?.NODE_2?data?.Readings?.TANK.ph_remark:''}</p>
         </div>
     </div>
     </>

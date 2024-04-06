@@ -34,6 +34,7 @@ import axios from 'axios'
 import Profile from '../components/Profile/Profile'
 import VillageInfo from '../components/Profile/VillageInfo'
 import CheckComplaints from '../components/Complaint/CheckComplaints'
+import MachineLearning from '../components/MachineLearning/MachineLearning'
 // import NewLineChart from '../components/RealTimeDashboard/NewLineChart'
 
 // function Login() {
@@ -246,6 +247,7 @@ const router = createBrowserRouter(
           <Route element={<Profile/>} path="/profile" />
           <Route element={<VillageInfo />} path="/info" />
           <Route element={<CheckComplaints />} path="/checkcomplaints" />
+          <Route element={<MachineLearning />} path="/ml" />
 
           </Route>
           

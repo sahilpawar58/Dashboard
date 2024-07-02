@@ -5,6 +5,7 @@ import axios from 'axios';
 import { AiOutlineLoading } from "react-icons/ai";
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../urlconfig';
 
 function findAverage(coords) {
   let totalX = 0;
@@ -32,7 +33,7 @@ function DetailedMap({url,center,District_ID}) {
   const [NewCenter,setNewCenter] = useState(null);
 
   useEffect(() => {
-    axios.post('http://localhost:3000/api/v1/geojson/village', {
+    axios.post(`${API_URL}/api/v1/geojson/village`, {
       districtID: localStorage.getItem("District_ID") || 11,
       tehsilID: localStorage.getItem("Tehsil_NO") || 9,
       name: localStorage.getItem("Village") || "Birsola"

@@ -2,6 +2,7 @@ import React from 'react'
 import { useContext,useState,useEffect } from 'react'
 import axios from 'axios';
 import AuthContext from '../context/AuthContext'
+import { API_URL } from '../../urlconfig';
 
 function CheckComplaints() {
     const [complaints, setComplaints] = useState([]);
@@ -14,7 +15,7 @@ function CheckComplaints() {
 
     useEffect(() => {
       // Fetch complaints data from API
-      axios.post('http://localhost:3000/api/v1/sensor/getcomplaints',data)
+      axios.post(`${API_URL}/api/v1/sensor/getcomplaints`,data)
         .then(response => {
           // Set complaints state with data from the response
           setComplaints(response.data.data);

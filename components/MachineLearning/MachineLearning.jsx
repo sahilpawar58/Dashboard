@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
 import axios from 'axios'; // Import Axios
+import { API_URL } from '../../urlconfig';
 
 const ChartComponent = () => {
   const [chartData1, setChartData1] = useState([]);
@@ -11,7 +12,7 @@ const ChartComponent = () => {
   useEffect(() => {
     const fetchData1 = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/sensor/getmldata'); // Use Axios to fetch data
+        const response = await axios.get(`${API_URL}/api/v1/sensor/getmldata`); // Use Axios to fetch data
         setChartData1(response.data.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -24,7 +25,7 @@ const ChartComponent = () => {
   useEffect(() => {
     const fetchData2 = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/sensor/getmldatatwo'); // Adjust the URL for the second API
+        const response = await axios.get(`${API_URL}/api/v1/sensor/getmldatatwo`); // Adjust the URL for the second API
         ///console.log(response.data.data)
         setChartData2(response.data.data);
       } catch (error) {
@@ -47,15 +48,15 @@ const ChartComponent = () => {
           labels: chartData1.map(dataPoint => dataPoint.ds),
           datasets: [
             {
-              label: 'yhat',
+              label: 'Predicted',
               data: chartData1.map(dataPoint => dataPoint.yhat)
             },
             {
-              label: 'yhat_lower',
+              label: 'Lower Bound',
               data: chartData1.map(dataPoint => dataPoint.yhat_lower)
             },
             {
-              label: 'yhat_upper',
+              label: 'Upper Bound',
               data: chartData1.map(dataPoint => dataPoint.yhat_upper)
             }
           ]
@@ -77,15 +78,15 @@ const ChartComponent = () => {
           labels: chartData2.map(dataPoint => dataPoint.ds),
           datasets: [
             {
-                label: 'yhat',
+                label: 'Prdicted',
                 data: chartData2.map(dataPoint => dataPoint.yhat)
               },
               {
-                label: 'yhat_lower',
+                label: 'Lower Bound',
                 data: chartData2.map(dataPoint => dataPoint.yhat_lower)
               },
               {
-                label: 'yhat_upper',
+                label: 'Upper Bound',
                 data: chartData2.map(dataPoint => dataPoint.yhat_upper)
               }
           ]

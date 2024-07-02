@@ -11,6 +11,7 @@ import { useNavigate,useParams } from 'react-router-dom';
 function Map({url}) {
   const [geojsonData, setGeojsonData] = useState(null);
   const [loading,setLoading] = useState(true);
+  const [states,setStates] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -25,6 +26,14 @@ function Map({url}) {
     .then(function (response) {
       console.log(response.data)
       setGeojsonData(response.data.data);
+      for(let a in response.data.data){
+        
+        states.push({
+          name:response.data.data[a].properties.NAME_1,
+          ID_1:response.data.data[a].properties.ID_1
+        })
+      }
+      console.log(states)
       setLoading(false);
     });
 

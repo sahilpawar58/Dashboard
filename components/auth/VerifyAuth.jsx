@@ -2,12 +2,13 @@ import React, { useContext, useEffect } from 'react'
 import AuthContext from '../context/AuthContext';
 import { Outlet } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../../urlconfig';
 
 
 async function verifyUser(){
     try{
         const response = await axios.post(
-            "http://localhost:3000/api/v1/user/verify",
+            `${API_URL}/api/v1/user/verify`,
             null, // Since we are not sending any data in the body, pass null or an empty object
             { withCredentials: true } 
           );

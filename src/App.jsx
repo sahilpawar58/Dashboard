@@ -35,6 +35,7 @@ import Profile from '../components/Profile/Profile'
 import VillageInfo from '../components/Profile/VillageInfo'
 import CheckComplaints from '../components/Complaint/CheckComplaints'
 import MachineLearning from '../components/MachineLearning/MachineLearning'
+import { API_URL } from '../urlconfig'
 // import NewLineChart from '../components/RealTimeDashboard/NewLineChart'
 
 // function Login() {
@@ -125,7 +126,7 @@ import MachineLearning from '../components/MachineLearning/MachineLearning'
 async function verifyUser(){
   try{
       const response = await axios.post(
-          "http://localhost:3000/api/v1/user/verify",
+          `${API_URL}/api/v1/user/verify`,
           null, // Since we are not sending any data in the body, pass null or an empty object
           { withCredentials: true } 
         );
@@ -147,7 +148,7 @@ const PrivateRoutes = () => {
       const setAuthentication = async () => {
           try {
               const response = await axios.post(
-                  "http://localhost:3000/api/v1/user/verify",
+                  `${API_URL}/api/v1/user/verify`,
                   { /* Optional data to send in the request body */ },
                   { withCredentials: true }
               );
@@ -155,7 +156,7 @@ const PrivateRoutes = () => {
               console.log(response.data.data._id)
               if (response && response.data ) {
                   villageinfo = await axios.post(
-                      "http://localhost:3000/api/v1/geojson/villageinfo",
+                      `${API_URL}/api/v1/geojson/villageinfo`,
                       { "id": response.data.data._id },
                       { withCredentials: true }
                   );
@@ -193,7 +194,7 @@ const PrivateRoutes = () => {
 };
 
 
-
+let geojson = `${API_URL}/api/v1/geojson`
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -205,27 +206,27 @@ const router = createBrowserRouter(
       <Route path="" element={<Layout />}>
          <Route path="main" element={
          <>
-         <MapContainer url="http://localhost:3000/api/v1/geojson" center={[22.735656, 79.89257]}/>
+         <MapContainer url={`${API_URL}/api/v1/geojson`} center={[22.735656, 79.89257]}/>
          <RightPage />
          </>} 
          />
          
          <Route path="/state/:id" element={
           <>
-          <StateMapContianer url="http://localhost:3000/api/v1/geojson/state" center={[19.0760, 76.2685]}/>
+          <StateMapContianer url={`${API_URL}/api/v1/geojson/state`} center={[19.0760, 76.2685]}/>
           </>
           } 
           />
           <Route path="/taluka/:District_ID" element={
           <>
-          <TalukaMapContianer url="http://localhost:3000/api/v1/geojson/taluka" centerUrl="http://localhost:3000/api/v1/geojson/talukaCenter" center={[18.8047902, 76.528924]}/>
+          <TalukaMapContianer url={`${API_URL}/api/v1/geojson/taluka`} centerUrl={`${API_URL}/api/v1/geojson/talukaCenter`} center={[18.8047902, 76.528924]}/>
           </>
           }
            />
           
            <Route path="/villages/:District_ID/:Tehsil_ID" element={
           <>
-          <VillageMapContianer url="http://localhost:3000/api/v1/geojson/villages" centerUrl="http://localhost:3000/api/v1/geojson/taluka" center={[18.8047902, 76.528924]}/>
+          <VillageMapContianer url={`${API_URL}/api/v1/geojson/villages`} centerUrl={`${API_URL}/api/v1/geojson/taluka`} center={[18.8047902, 76.528924]}/>
           </>
           }
            />
@@ -258,6 +259,7 @@ const router = createBrowserRouter(
 )
 
 function App() {
+  
   return (
     <>
     

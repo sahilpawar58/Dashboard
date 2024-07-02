@@ -210,11 +210,11 @@ export default function NewLineChart({url,width,type,label}) {
     </div>
     <div class='flex justify-between w-full'>
         <div class='flex flex-col w-1/2 items-center  p-4 rounded-lg border-slate-800 shadow-md mr-4'>
-            <p class='font-semibold '>Desired litres</p>
-            <p class=''>{data?.Readings?.NODE_2?data?.Readings?.TANK.Turbidity_remark:''}</p>
+            <p class='font-semibold '>Turbidity Remark</p>
+            <p class=''>{data?.Readings?.NODE_2?data?.Readings?.TANK.turbidity_remark:''}neutral</p>
         </div>
         <div class='flex flex-col w-1/2 items-center  p-4 rounded-lg shadow-md mr-4'>
-            <p class='font-semibold '>Desired litres</p>
+            <p class='font-semibold '>pH Remark</p>
             <p class=''>{data?.Readings?.NODE_2?data?.Readings?.TANK.ph_remark:''}</p>
         </div>
     </div>

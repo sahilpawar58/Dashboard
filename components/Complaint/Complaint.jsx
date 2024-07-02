@@ -1,5 +1,6 @@
 import React, { useState,useEffect,useRef } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../urlconfig';
 
 function Dropdownvillage({ url,data, label, onSelect }) {
   const [options, setOptions] = useState([]);
@@ -202,7 +203,7 @@ function Complaint() {
     };
     
     // Replace 'your_api_endpoint' with your actual API endpoint
-    axios.post('http://localhost:3000/api/v1/sensor/makecomplaint',data, {
+    axios.post(`${API_URL}/api/v1/sensor/makecomplaint`,data, {
       headers: {
         'Content-Type': 'application/json' // Specify content type as JSON
       }
@@ -228,14 +229,14 @@ function Complaint() {
     <div className="h-auto w-96">
     <div className="flex flex-col space-y-4">
   <Dropdown
-    url="http://localhost:3000/api/v1/geojson/getdistricts"
+    url={`${API_URL}/api/v1/geojson/getdistricts`}
     label="Select District"
     onSelect={handleDistrictChange}
   />
   
   {selectedDistrict && (
     <Dropdownpost
-      url="http://localhost:3000/api/v1/geojson/gettehsils"
+      url={`${API_URL}/api/v1/geojson/gettehsils`}
       label="Select Tehsil"
       data={selectedDistrict}
       onSelect={handleTehsilChange}
@@ -244,7 +245,7 @@ function Complaint() {
 
   {selectedTehsil && (
     <Dropdownvillage
-      url="http://localhost:3000/api/v1/geojson/getvillages"
+      url={`${API_URL}/api/v1/geojson/getvillages`}
       label="Select Tehsil"
       data={selectedTehsil}
       onSelect={handleVillageChange}

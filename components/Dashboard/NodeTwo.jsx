@@ -1,5 +1,6 @@
 import React,{useState} from 'react'
 import NewLineChart from './NewLineChart'
+import { API_URL } from '../../urlconfig'
 
 const Switcher = () => {
     const [isChecked, setIsChecked] = useState(false)
@@ -41,7 +42,7 @@ function NodeTwo() {
   return (
     <div class='flex flex-col justify-center items-center  p-2 rounded-lg shadow-lg'>
     <p class='font-bold  text-xl mb-4'>Node Two</p>
-    <NewLineChart url="http://localhost:3000/api/v1/sensor/getdata" width="90vw" type="Flowmeter" label="Ltr"/>
+    <NewLineChart url={`${API_URL}/api/v1/sensor/getdata`} width="90vw" type="Flowmeter" label="Ltr"/>
     <div class='flex justify-between'>
         <div class='flex flex-col items-center  p-4 rounded-lg shadow-md mr-4'>
             <p class='font-semibold '>Desired litres</p>

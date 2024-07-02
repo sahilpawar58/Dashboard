@@ -5,6 +5,7 @@ import { toast,ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Cookies from 'js-cookie';
+import { API_URL } from '../../urlconfig'
 
 export default function Login() {
   
@@ -36,7 +37,7 @@ export default function Login() {
       await toast.promise(
         async () => {
           const response = await axios.post(
-            "http://localhost:3000/api/v1/user/login",
+            `${API_URL}/api/v1/user/login`,
             formData,
             { withCredentials: true } 
           );

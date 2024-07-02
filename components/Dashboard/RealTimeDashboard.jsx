@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import NodeTwo from './NodeTwo';
 import NodelOne from './NodelOne';
 import axios from 'axios';
+import { API_URL } from '../../urlconfig';
 
 async function verifyUser(){
   const response = await axios.post(
-    "http://localhost:3000/api/v1/user/verify",
+    `${API_URL}/api/v1/user/verify`,
     null, // Since we are not sending any data in the body, pass null or an empty object
     { withCredentials: true } 
   );
@@ -34,6 +35,7 @@ const RealtimeDashboard = () => {
   // );
 
   // console.log(response.status)
+ 
 
   return (
     <div className="flex flex-col " name="Real">

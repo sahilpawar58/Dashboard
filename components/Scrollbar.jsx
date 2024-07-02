@@ -20,7 +20,7 @@ export default function Scrollbar() {
               fontWeight: isActive ? "bold" : "",
             };
           }}>
-          <div className=' p-2 box-content'><img className="h-16 w-16" src="../dashboard.png"></img></div>
+          <div className=' p-2 box-content'><img className="h-16 w-16" src="http://res.cloudinary.com/dubr8odt7/image/upload/v1719900929/JJM/knywty8zoxfbdk5a2fwf.png"></img></div>
           <div className='p-2'><p>Dashboard</p></div>
         </NavLink>
         </div>
@@ -35,7 +35,7 @@ export default function Scrollbar() {
               fontWeight: isActive ? "bold" : "",
             };
           }}>
-          <div className=' p-2 box-content'><img className="h-16 w-16" src="../brain.png"></img></div>
+          <div className=' p-2 box-content'><img className="h-16 w-16" src="http://res.cloudinary.com/dubr8odt7/image/upload/v1719900929/JJM/jqk4rxvup0y718dce9bn.png"></img></div>
           <div className='p-2'><p>ML</p></div>
         </NavLink>
         </div>
@@ -50,7 +50,7 @@ export default function Scrollbar() {
               fontWeight: isActive ? "bold" : "",
             };
           }}>
-          <div className=' p-2 box-content'><img className="h-16 w-16" src="../user.png"></img></div>
+          <div className=' p-2 box-content'><img className="h-16 w-16" src="http://res.cloudinary.com/dubr8odt7/image/upload/v1719900929/JJM/mdlw4miznvwrni9xs5fn.png"></img></div>
           <div className='p-2'><p>Profile</p></div>
         </NavLink>
         </div>
@@ -65,7 +65,7 @@ export default function Scrollbar() {
               fontWeight: isActive ? "bold" : "",
             };
           }}>
-          <div className=' p-2 box-content'><img className="h-16 w-16" src="../home.png"></img></div>
+          <div className=' p-2 box-content'><img className="h-16 w-16" src="http://res.cloudinary.com/dubr8odt7/image/upload/v1719900929/JJM/wttbo4wrhvyvmszr9kx5.png"></img></div>
           <div className='p-2'><p>Village Info</p></div>
         </NavLink>
         </div>
@@ -80,7 +80,7 @@ export default function Scrollbar() {
               fontWeight: isActive ? "bold" : "",
             };
           }}>
-          <div className=' p-2 box-content'><img className="h-16 w-16" src="../review.png"></img></div>
+          <div className=' p-2 box-content'><img className="h-16 w-16" src="http://res.cloudinary.com/dubr8odt7/image/upload/v1719900929/JJM/bqy4v5clwerdekixka4q.png"></img></div>
           <div className='p-2'><p>Complains </p></div>
         </NavLink>
         </div>
@@ -95,7 +95,7 @@ export default function Scrollbar() {
               fontWeight: isActive ? "bold" : "",
             };
           }}>
-          <div className=' p-2 box-content'><img className="h-16 w-16" src="../review.png"></img></div>
+          <div className=' p-2 box-content'><img className="h-16 w-16" src="http://res.cloudinary.com/dubr8odt7/image/upload/v1719900929/JJM/bqy4v5clwerdekixka4q.png"></img></div>
           <div className='p-2'><p>Analysis </p></div>
         </NavLink>
         </div>
